@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mcpo
+  namespace: argocd
+spec:
+  project: application
+  source:
+    repoURL: https://github.com/adorsys-gis/ai-ops
+    targetRevision: HEAD
+    path: charts/mcpo
+    helm:
+      valuesObject:
+        configMaps:
+          config:
+            enabled: false
+        mcpo:
+          controllers:
+            main:
+              type: statefulset
+              strategy: RollingUpdate
+              replicas: 1
+          persistence:
+            config:
+              enabled: false
+            config-json:
+              enabled: true
+              type: secret
+              name: mcpo-config-gen
+              advancedMounts:
+                main:
+                  mcpo:
+                    - path: /tmp/config.json
+                      readOnly: true
+                      subPath: config.json
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mcpo
+
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
+    automated:
+      prune: true
+      selfHeal: true
+
+  revisionHistoryLimit: 3
