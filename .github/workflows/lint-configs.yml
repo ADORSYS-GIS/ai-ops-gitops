@@ -2,9 +2,9 @@ name: Lint Configuration Files
 
 on:
   push:
-    branches: [feature/add-config-linting]
+    branches: [main]
   pull_request:
-    branches: [feature/add-config-linting]
+    branches: [main]
     paths:
       - "deploy/**/*.yaml"
       - "deploy/**/*.yml"
