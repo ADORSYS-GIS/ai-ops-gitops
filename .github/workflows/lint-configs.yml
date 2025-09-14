@@ -59,7 +59,7 @@ jobs:
               kubeconform \
                 -skip Application,CustomResourceDefinition -ignore-missing-schemas \
                 -schema-location default \
-                -schema-location 'https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/{{.Group}}-{{ResourceAPIVersion}}-{{.Kind}}.yaml' \
+                -schema-location 'https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/{{.Group}}-{{.APIVersion}}-{{.Kind}}.yaml' \
                 "$file"
             fi
           done < /tmp/yaml_files.txt
