@@ -29,8 +29,8 @@ spec:
             alb.ingress.kubernetes.io/listen-ports: |
               [
                 {
-                  "HTTP":80
-                }, 
+                  "HTTP": 80
+                },
                 {
                   "HTTPS": 443
                 }
