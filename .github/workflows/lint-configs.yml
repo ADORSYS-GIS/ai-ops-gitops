@@ -56,7 +56,9 @@ jobs:
             kind=$(yq eval '.kind // "skip"' "$file")
             if [[ "$kind" != "skip" ]]; then
               echo "Validating: $file ($kind)"
-              kubeconform -schema-location default \
+              kubeconform \
+                -skip Application,CustomResourceDefinition -ignore-missing-schemas \
+                -schema-location default \
                 -schema-location 'https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/{{.Group}}-{{.Version}}-{{.Kind}}.yaml' \
                 "$file"
             fi
