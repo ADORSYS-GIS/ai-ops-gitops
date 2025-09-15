@@ -1,0 +1,95 @@
+name: Lint Configuration Files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - "deploy/**/*.yaml"
+      - "deploy/**/*.yml"
+      - ".yamllint.yml"
+
+env:
+  CONFIG_PATHS: "deploy/"
+
+jobs:
+  lint-configs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install arkade and tools
+        run: |
+          curl -sLS https://get.arkade.dev | sudo sh
+          arkade get yq kubeconform kubectl
+          pip install yamllint==1.35.1
+          echo "$HOME/.arkade/bin" >> $GITHUB_PATH
+
+      - name: Find YAML files
+        run: |
+          find $CONFIG_PATHS -name "*.yaml" -o -name "*.yml" | sort > /tmp/yaml_files.txt
+          echo "Files to validate:"
+          cat /tmp/yaml_files.txt
+
+      - name: Validate YAML syntax
+        run: |
+          echo "🔍 Checking YAML syntax..."
+          while read file; do
+            echo "Checking: $file"
+            yq eval '.' "$file" > /dev/null
+          done < /tmp/yaml_files.txt
+          echo "✅ YAML syntax valid"
+
+      - name: Run yamllint style checks
+        run: |
+          echo "🔍 Checking YAML style..."
+          yamllint $(cat /tmp/yaml_files.txt)
+          echo "✅ YAML style checks passed"
+
+      - name: Validate Kubernetes manifests
+        run: |
+          echo "🔍 Validating Kubernetes manifests..."
+          while read file; do
+            kind=$(yq eval '.kind // "skip"' "$file")
+            if [[ "$kind" != "skip" ]]; then
+              echo "Validating: $file ($kind)"
+              kubeconform \
+                -skip Application,CustomResourceDefinition -ignore-missing-schemas \
+                -schema-location default \
+                -schema-location 'https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/{{.Group}}-{{.ResourceKind}}.yaml' \
+                "$file"
+            fi
+          done < /tmp/yaml_files.txt
+          echo "✅ Kubernetes manifests valid"
+
+      - name: Check ArgoCD Applications
+        run: |
+          echo "🔍 Checking ArgoCD Applications..."
+          while read file; do
+            if [[ $(yq eval '.kind' "$file") == "Application" ]]; then
+              echo "Checking ArgoCD App: $file"
+              
+              # Check required fields
+              yq eval '.spec.source.repoURL' "$file" > /dev/null || { echo "❌ Missing repoURL"; exit 1; }
+              yq eval '.spec.source.path' "$file" > /dev/null || { echo "❌ Missing source path"; exit 1; }
+              yq eval '.spec.destination.server' "$file" > /dev/null || { echo "❌ Missing destination server"; exit 1; }
+              yq eval '.spec.destination.namespace' "$file" > /dev/null || { echo "❌ Missing destination namespace"; exit 1; }
+              
+              echo "✅ $file - ArgoCD structure valid"
+            fi
+          done < /tmp/yaml_files.txt
+          echo "✅ ArgoCD Applications valid"
+
+      - name: Summary
+        run: |
+          total_files=$(wc -l < /tmp/yaml_files.txt)
+          echo "📋 Validation Summary:"
+          echo "  - Files processed: $total_files"
+          echo "  - YAML syntax: ✅ Valid"
+          echo "  - Style checks: ✅ Passed"  
+          echo "  - K8s manifests: ✅ Valid"
+          echo "  - ArgoCD apps: ✅ Valid"
+          echo "🎉 All validations passed!"

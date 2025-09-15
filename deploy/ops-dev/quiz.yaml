@@ -21,7 +21,6 @@ spec:
                   tag: latest
                   pullPolicy: Always
                 env:
-                  # A smart model
                   OPENAI_QUESTION_BASE_URL: http://litellm.litellm.svc.cluster.local:4000
                   OPENAI_QUESTION_API_KEY:
                     valueFrom:
@@ -30,8 +29,7 @@ spec:
                         key: litellm-openai-api-key
                   OPENAI_QUESTION_MODEL: o4-mini
                   OPENAI_QUESTION_TOOLING: true
-        
-                  # A smart model
+
                   OPENAI_RESPONSE_BASE_URL: http://litellm.litellm.svc.cluster.local:4000
                   OPENAI_RESPONSE_API_KEY:
                     valueFrom:
@@ -40,8 +38,7 @@ spec:
                         key: litellm-openai-api-key
                   OPENAI_RESPONSE_MODEL: gpt-4.1-mini
                   OPENAI_RESPONSE_TOOLING: true
-        
-                  # A tooling capable yet smart model 
+
                   OPENAI_SUMMARIZER_BASE_URL: http://litellm.litellm.svc.cluster.local:4000
                   OPENAI_SUMMARIZER_API_KEY:
                     valueFrom:
@@ -49,8 +46,7 @@ spec:
                         name: open-web-ui-keys
                         key: litellm-openai-api-key
                   OPENAI_SUMMARIZER_MODEL: gpt-4.1-mini
-        
-                  # A tooling capable yet smart model 
+
                   OPENAI_EMBEDDING_BASE_URL: http://litellm.litellm.svc.cluster.local:4000
                   OPENAI_EMBEDDING_API_KEY:
                     valueFrom:
@@ -58,17 +54,17 @@ spec:
                         name: open-web-ui-keys
                         key: litellm-openai-api-key
                   OPENAI_EMBEDDING_MODEL: text-embedding-3-small
-        
+
                   CHROMA_HOST: chromadb
                   CHROMA_COLLECTION_PREFIX: kivoyo_quizz_
-        
+
                   CACHE_TTL: 60000
                   CACHE_REDIS_URL:
                     valueFrom:
                       secretKeyRef:
                         name: open-web-ui-redis-secret
                         key: redis-url
-    
+
   destination:
     server: https://kubernetes.default.svc
     namespace: chat-ui
