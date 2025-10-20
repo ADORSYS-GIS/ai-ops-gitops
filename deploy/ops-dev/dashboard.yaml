@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dashboard
+  namespace: argocd
+spec:
+  project: application
+  source:
+    repoURL: https://github.com/ADORSYS-GIS/ai-helm
+    targetRevision: HEAD
+    path: charts/dash-board-helm
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dashboard
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
+    automated:
+      prune: true
+      selfHeal: true
+  revisionHistoryLimit: 2

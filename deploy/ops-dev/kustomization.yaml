@@ -8,3 +8,5 @@ resources:
   - litellm.yaml
   - mcpo.yaml
   - eg.yaml
+  - self-service.yaml
+  - dashboard.yaml

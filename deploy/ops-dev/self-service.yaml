@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: self-service
+  namespace: argocd
+spec:
+  project: application
+  source:
+    repoURL: https://github.com/ADORSYS-GIS/ai-helm
+    targetRevision: 4bf1094fc82bc4c2c1361586ff20f5fd3f79b187
+    path: charts/lightbridge-authz-umbrella
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: self-service
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
+    automated:
+      prune: true
+      selfHeal: true
+  revisionHistoryLimit: 2
