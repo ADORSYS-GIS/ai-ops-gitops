@@ -9,4 +9,4 @@ resources:
   - mcpo.yaml
   - eg.yaml
   - self-service.yaml
-  - dashboard.yaml
+  - lite-llm-customer.yaml

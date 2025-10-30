@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dashboard
+  name: lite-llm-customer
   namespace: argocd
 spec:
   project: application
   source:
     repoURL: https://github.com/ADORSYS-GIS/ai-helm
     targetRevision: HEAD
-    path: charts/dash-board-helm
+    path: charts/lite-llm-customer
   destination:
     server: https://kubernetes.default.svc
-    namespace: dashboard
+    namespace: lite-llm-customer
   syncPolicy:
     syncOptions:
       - ServerSideApply=true
