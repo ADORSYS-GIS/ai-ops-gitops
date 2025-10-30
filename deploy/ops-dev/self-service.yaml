@@ -7,7 +7,7 @@ spec:
   project: application
   source:
     repoURL: https://github.com/ADORSYS-GIS/ai-helm
-    targetRevision: 4bf1094fc82bc4c2c1361586ff20f5fd3f79b187
+    targetRevision: HEAD
     path: charts/lightbridge-authz-umbrella
   destination:
     server: https://kubernetes.default.svc
