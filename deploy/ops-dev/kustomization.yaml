@@ -3,8 +3,10 @@ kind: Kustomization
 
 resources:
   - adminer.yaml
-  - quiz.yaml
   - chat-ui.yaml
+  - eg.yaml
+  - lite-llm-customer.yaml
   - litellm.yaml
   - mcpo.yaml
-  - eg.yaml
+  - quiz-backend.yaml
+  - self-service.yaml

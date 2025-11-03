@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: envoy-gateway
+  name: lite-llm-customer
   namespace: argocd
 spec:
   project: application
   source:
-    repoURL: https://github.com/adorsys-gis/ai-ops
+    repoURL: https://github.com/ADORSYS-GIS/ai-helm
     targetRevision: HEAD
-    path: charts/proxy
+    path: charts/lite-llm-customer
   destination:
     server: https://kubernetes.default.svc
-    namespace: envoy-gateway-system
+    namespace: lite-llm-customer
   syncPolicy:
     syncOptions:
       - ServerSideApply=true
